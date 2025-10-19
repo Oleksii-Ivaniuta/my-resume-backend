@@ -65,7 +65,7 @@ export const createProjectController = async (req, res) => {
 
 export const deleteProjectController = async (req, res, next) => {
   const { projectId } = req.params;
-  const oldPhotoUrl = getProjectPhotoUrl(projectId);
+  const oldPhotoUrl = await getProjectPhotoUrl(projectId);
 
   if (oldPhotoUrl) {
     await deleteFileFromUploadDir(oldPhotoUrl);
@@ -85,7 +85,7 @@ export const updateProjectController = async (req, res, next) => {
   const photo = await req.file;
   let photoUrl;
 
-  const oldPhotoUrl = getProjectPhotoUrl(projectId);
+  const oldPhotoUrl = await getProjectPhotoUrl(projectId);
 
   if (photo) {
     if (oldPhotoUrl) {
@@ -96,7 +96,7 @@ export const updateProjectController = async (req, res, next) => {
 
   const result = await updateProject(projectId, {
     ...body,
-    photo: photoUrl,
+    photoUrl: photoUrl,
   });
 
   if (!result) {

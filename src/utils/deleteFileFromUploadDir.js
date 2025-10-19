@@ -6,7 +6,9 @@ export const deleteFileFromUploadDir = async (filePathOrUrl) => {
   try {
     if (!filePathOrUrl) return;
     const fileName = path.basename(filePathOrUrl);
+    console.log(fileName);
     const absolutePath = path.join(UPLOAD_DIR, fileName);
+    console.log(absolutePath);
     await fs.access(absolutePath);
     await fs.unlink(absolutePath);
     console.log(`🗑️  Deleted old file: ${fileName}`);
