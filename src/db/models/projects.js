@@ -6,7 +6,15 @@ const projectsSchema = new Schema(
       type: String,
       required: true,
     },
-    description: {
+    descriptionEn: {
+      type: String,
+      required: true,
+    },
+    descriptionUk: {
+      type: String,
+      required: true,
+    },
+    descriptionPt: {
       type: String,
       required: true,
     },
@@ -30,11 +38,27 @@ const projectsSchema = new Schema(
       type: String,
       required: true,
     },
-    type: {
+    typeEn: {
       type: String,
       required: true,
     },
-    role: {
+    typeUk: {
+      type: String,
+      required: true,
+    },
+    typePt: {
+      type: String,
+      required: true,
+    },
+    roleEn: {
+      type: String,
+      required: true,
+    },
+    roleUk: {
+      type: String,
+      required: true,
+    },
+    rolePt: {
       type: String,
       required: true,
     },

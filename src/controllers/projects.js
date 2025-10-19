@@ -24,7 +24,7 @@ export const getProjectsController = async (req, res, next) => {
 
   res.json({
     status: 200,
-    message: 'Successfully found contacts!',
+    message: 'Successfully found projects!',
     data: projects,
   });
 };
@@ -33,7 +33,7 @@ export const getProjectByIdController = async (req, res, next) => {
   const { projectId } = req.params;
   const project = await getProjectById(projectId);
   if (!project) {
-    throw createHttpError(404, 'Contact not found');
+    throw createHttpError(404, 'Project not found');
   }
   res.json({
     status: 200,
@@ -105,7 +105,7 @@ export const updateProjectController = async (req, res, next) => {
 
   res.json({
     status: 200,
-    message: `Successfully patched contact with id ${projectId}!`,
+    message: `Successfully patched project with id ${projectId}!`,
     data: result.project,
   });
 };
