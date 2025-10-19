@@ -1,0 +1,52 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Oleksii Ivaniuta's resume backend
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: This is a documentation of resume backend app
+tags:
+  - name: Projects
+    description: Operations about projects.
+  - name: Auth
+    description: Auth operations.
+servers:
+  - url: http://localhost:3000
+  - url: https://example.com/api/v1
+paths:
+  /auth/register:
+    post:
+      $ref: ../swagger/paths/auth/register/post.yaml
+  /auth/login:
+    post:
+      $ref: ../swagger/paths/auth/login/post.yaml
+  /auth/logout:
+    post:
+      $ref: ../swagger/paths/auth/logout/post.yaml
+  /auth/change-password:
+    post:
+      $ref: ../swagger/paths/auth/change-password/post.yaml
+  /auth/refresh:
+    post:
+      $ref: ../swagger/paths/auth/refresh/post.yaml
+  /projects:
+    get:
+      $ref: ../swagger/paths/projects/get.yaml
+  /projects:
+    post:
+      $ref: ../swagger/paths/projects/post.yaml
+  /projects/{projectId}:
+    get:
+      $ref: ../swagger/paths/projects/{projectId}/get.yaml
+  /projects/{projectId}:
+    patch:
+      $ref: ../swagger/paths/projects/{projectId}/patch.yaml
+  /projects/{projectId}:
+    delete:
+      $ref: ../swagger/paths/projects/{projectId}/delete.yaml
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
