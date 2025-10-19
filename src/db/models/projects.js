@@ -6,6 +6,10 @@ const projectsSchema = new Schema(
       type: String,
       required: true,
     },
+    order: {
+      type: Number,
+      required: true,
+    },
     descriptionEn: {
       type: String,
       required: true,

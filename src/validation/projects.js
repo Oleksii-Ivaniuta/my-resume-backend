@@ -7,6 +7,7 @@ const localizedStrOptional = Joi.string().trim().min(2);
 
 export const createProjectSchema = Joi.object({
   name: Joi.string().trim().min(2).max(100).required(),
+  order: Joi.number().required(),
 
   // descriptions
   descriptionEn: localizedStrRequired.required(),
@@ -34,6 +35,7 @@ export const createProjectSchema = Joi.object({
 
 export const updateProjectSchema = Joi.object({
   name: Joi.string().trim().min(2).max(100),
+  order: Joi.number(),
 
   // descriptions
   descriptionEn: localizedStrOptional,
