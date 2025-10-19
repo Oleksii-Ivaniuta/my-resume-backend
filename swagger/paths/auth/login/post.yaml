@@ -1,0 +1,51 @@
+tags: [Auth]
+summary: Login
+operationId: login
+description: |
+  Успішний логін:
+  - встановлює **HttpOnly** cookies `refreshToken`, `sessionId` (≈ 30 днів)
+  - повертає `accessToken` у тілі
+security: [] # публічний
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required: [email, password]
+        properties:
+          email: { type: string, format: email, example: 11.ivaniuta@gmail.com }
+          password: { type: string, example: Secret123! }
+responses:
+  200:
+    description: OK
+    headers:
+      Set-Cookie:
+        description: Встановлює `refreshToken` та `sessionId` (HttpOnly)
+        schema: { type: string }
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            stratus: { type: integer, example: 200 }
+            message: { type: string, example: Successfully logged in }
+            data:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  example: c3VwZXItcmFuZG9tLWFjY2Vzcw==
+  401:
+    description: Unauthorized (невірні облікові дані або користувача не знайдено)
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status: { type: integer, example: 401 }
+            message: { type: string, example: Unauthorized }
+  400:
+    description: Validation error
+  500:
+    description: Internal server error

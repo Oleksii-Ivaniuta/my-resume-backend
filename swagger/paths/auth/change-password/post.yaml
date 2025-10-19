@@ -1,0 +1,39 @@
+tags: [Auth]
+summary: Change password
+operationId: changePass
+description: Зміна пароля за email + поточний пароль + новий пароль. Після зміни видаляються всі сесії користувача.
+security: [] # публічний (за поточною реалізацією)
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required: [email, password, newPassword]
+        properties:
+          email: { type: string, format: email }
+          password: { type: string, minLength: 3, maxLength: 30 }
+          newPassword: { type: string, minLength: 3, maxLength: 30 }
+responses:
+  201:
+    description: Password updated
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            stratus: { type: integer, example: 201 }
+            message: { type: string, example: Password updated successfully }
+  401:
+    description: Unauthorized (User not found / Incorrect current password)
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status: { type: integer, example: 401 }
+            message: { type: string, example: Incorrect current password }
+  400:
+    description: Validation error
+  500:
+    description: Internal server error

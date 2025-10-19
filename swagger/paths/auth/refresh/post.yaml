@@ -1,0 +1,36 @@
+tags: [Auth]
+summary: Refresh session (cookies)
+operationId: refresh
+description: Читає HttpOnly cookies `sessionId` та `refreshToken`, перевидає їх і повертає новий `accessToken`.
+security: [] # публічний
+responses:
+  200:
+    description: OK
+    headers:
+      Set-Cookie:
+        description: Оновлює `refreshToken` та `sessionId` (HttpOnly, ≈30 днів)
+        schema: { type: string }
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status: { type: integer, example: 200 }
+            message: { type: string, example: Succesfully refreshed session! }
+            data:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  example: c3VwZXItcmFuZG9tLWFjY2Vzcw==
+  401:
+    description: Unauthorized (Session not found / Session token expired)
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status: { type: integer, example: 401 }
+            message: { type: string, example: Session token expired }
+  500:
+    description: Internal server error

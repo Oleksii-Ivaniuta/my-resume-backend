@@ -1,0 +1,72 @@
+tags: [Projects]
+summary: Create project
+operationId: createProject
+description: Захищений ендпоінт. Приймає multipart/form-data із файлом `photo`.
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        required:
+          - name
+          - order
+          - descriptionEn
+          - descriptionUk
+          - descriptionPt
+          - liveUrl
+          - techStack
+          - typeEn
+          - typeUk
+          - typePt
+          - roleEn
+          - roleUk
+          - rolePt
+        properties:
+          name: { type: string, example: Lloyd Jefferson }
+          order: { type: number, example: 10 }
+          descriptionEn:
+            { type: string, example: Full-stack app with Next.js & Node.js }
+          descriptionUk:
+            { type: string, example: Фул-стек застосунок на Next.js та Node.js }
+          descriptionPt:
+            {
+              type: string,
+              example: Aplicação full-stack com Next.js e Node.js,
+            }
+          liveUrl:
+            { type: string, format: uri, example: https://app.example.com }
+          frontCodeUrl: { type: string, format: uri }
+          backCodeUrl: { type: string, format: uri }
+          photoUrl: { type: string, format: uri }
+          techStack:
+            { type: string, example: 'Next.js, TypeScript, Node.js, MongoDB' }
+          typeEn: { type: string, example: Team project }
+          typeUk: { type: string, example: Командний проєкт }
+          typePt: { type: string, example: Projeto em equipe }
+          roleEn: { type: string, example: Full-stack developer }
+          roleUk: { type: string, example: Фул-стек розробник }
+          rolePt: { type: string, example: Desenvolvedor full-stack }
+          photo:
+            type: string
+            format: binary
+responses:
+  201:
+    description: Created
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status: { type: integer, example: 201 }
+            maessage: { type: string, example: Succesfully created project! }
+            data:
+              $ref: ../../components/schemas/project.yaml
+  400:
+    description: Validation error
+  401:
+    description: Unauthorized (Bearer token missing/invalid/expired)
+  500:
+    description: Internal server error

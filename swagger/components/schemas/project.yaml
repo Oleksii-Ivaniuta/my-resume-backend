@@ -1,0 +1,102 @@
+Project:
+  type: object
+  required:
+    - name
+    - order
+    - descriptionEn
+    - descriptionUk
+    - descriptionPt
+    - liveUrl
+    - techStack
+    - typeEn
+    - typeUk
+    - typePt
+    - roleEn
+    - roleUk
+    - rolePt
+  properties:
+    _id:
+      type: string
+      description: MongoDB ObjectId
+      example: 66fa0c2c2d3a9b7890ab1234
+
+    name:
+      type: string
+      description: Project name
+      example: Lloyd Jefferson
+
+    order:
+      type: number
+      description: Used for sorting display order
+      example: 10
+
+    descriptionEn:
+      type: string
+      example: Full-stack web app built with Next.js and Node.js
+    descriptionUk:
+      type: string
+      example: Фул-стек вебзастосунок, створений на Next.js та Node.js
+    descriptionPt:
+      type: string
+      example: Aplicação web full-stack desenvolvida com Next.js e Node.js
+
+    photoUrl:
+      type: string
+      format: uri
+      nullable: true
+      description: Public URL of the uploaded project image
+      example: https://cdn.example.com/projects/lloyd-jefferson.jpg
+
+    liveUrl:
+      type: string
+      format: uri
+      description: Public live project link
+      example: https://lloyd-jefferson.vercel.app
+
+    frontCodeUrl:
+      type: string
+      format: uri
+      nullable: true
+      description: Link to frontend repository
+      example: https://github.com/user/lloyd-jefferson-frontend
+
+    backCodeUrl:
+      type: string
+      format: uri
+      nullable: true
+      description: Link to backend repository
+      example: https://github.com/user/lloyd-jefferson-backend
+
+    techStack:
+      type: string
+      description: Technologies used
+      example: Next.js, TypeScript, Node.js, MongoDB
+
+    typeEn:
+      type: string
+      example: Team project
+    typeUk:
+      type: string
+      example: Командний проєкт
+    typePt:
+      type: string
+      example: Projeto em equipe
+
+    roleEn:
+      type: string
+      example: Full-stack developer
+    roleUk:
+      type: string
+      example: Фул-стек розробник
+    rolePt:
+      type: string
+      example: Desenvolvedor full-stack
+
+    createdAt:
+      type: string
+      format: date-time
+      example: 2025-01-19T12:34:56.000Z
+    updatedAt:
+      type: string
+      format: date-time
+      example: 2025-01-19T12:34:56.000Z

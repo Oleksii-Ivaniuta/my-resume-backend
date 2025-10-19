@@ -1,0 +1,59 @@
+tags: [Projects]
+summary: Update project
+operationId: updateProjectById
+description: Захищений ендпоінт. Приймає будь-яку підмножину полів. Підтримує файл `photo` — при наявності замінює попереднє фото.
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: projectId
+    required: true
+    schema: { type: string }
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          name: { type: string }
+          order: { type: number }
+          descriptionEn: { type: string }
+          descriptionUk: { type: string }
+          descriptionPt: { type: string }
+          liveUrl: { type: string, format: uri }
+          frontCodeUrl: { type: string, format: uri }
+          backCodeUrl: { type: string, format: uri }
+          photoUrl: { type: string, format: uri }
+          techStack: { type: string }
+          typeEn: { type: string }
+          typeUk: { type: string }
+          typePt: { type: string }
+          roleEn: { type: string }
+          roleUk: { type: string }
+          rolePt: { type: string }
+          photo:
+            type: string
+            format: binary
+responses:
+  200:
+    description: Updated
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status: { type: integer, example: 200 }
+            message:
+              type: string
+              example: Successfully patched project with id 66f9a1c9e0a9a9c2f0c12345!
+            data:
+              $ref: ../../../components/schemas/project.yaml
+  400:
+    description: Validation error
+  401:
+    description: Unauthorized (Bearer token missing/invalid/expired)
+  404:
+    description: Project not found
+  500:
+    description: Internal server error

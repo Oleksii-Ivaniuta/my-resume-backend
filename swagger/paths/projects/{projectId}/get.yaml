@@ -1,0 +1,25 @@
+tags: [Projects]
+summary: Get project by id
+operationId: getProjectById
+security: [] # публічний
+parameters:
+  - in: path
+    name: projectId
+    required: true
+    schema: { type: string }
+responses:
+  200:
+    description: OK
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status: { type: integer, example: 200 }
+            message: { type: string, example: Successfully found project }
+            data:
+              $ref: ../../../components/schemas/project.yaml
+  404:
+    description: Project not found
+  500:
+    description: Internal server error

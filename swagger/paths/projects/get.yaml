@@ -1,0 +1,44 @@
+tags: [Projects]
+summary: Get projects
+operationId: getProjects
+description: Публічний список проектів із пагінацією та сортуванням.
+security: [] # публічний
+parameters:
+  - in: query
+    name: page
+    schema: { type: integer, minimum: 1, default: 1 }
+  - in: query
+    name: perPage
+    schema: { type: integer, minimum: 1, maximum: 100, default: 6 }
+  - in: query
+    name: sortBy
+    schema: { type: string, default: order }
+  - in: query
+    name: sortOrder
+    schema:
+      type: string
+      enum: [asc, desc]
+      default: asc
+responses:
+  200:
+    description: OK
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status: { type: integer, example: 200 }
+            message: { type: string, example: Successfully found projects! }
+            data:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../../components/schemas/project.yaml
+                page: { type: integer, example: 1 }
+                perPage: { type: integer, example: 6 }
+                totalItems: { type: integer, example: 42 }
+                totalPages: { type: integer, example: 7 }
+  500:
+    description: Internal server error

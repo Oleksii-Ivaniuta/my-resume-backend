@@ -1,1 +1,1042 @@
-{}
+{
+  "openapi": "3.1.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Oleksii Ivaniuta's resume backend",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "description": "This is a documentation of resume backend app"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    },
+    {
+      "url": "https://example.com/api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Projects",
+      "description": "Operations about projects."
+    },
+    {
+      "name": "Auth",
+      "description": "Auth operations."
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Register first (and only) user",
+        "operationId": "register",
+        "description": "Створює першого користувача. Якщо користувач уже існує — 409 Conflict.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 30,
+                    "example": "Oleksii Ivaniuta"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "11.ivaniuta@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "Secret123!"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "stratus": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully registered a user!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "Створений користувач (публічні поля)",
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "example": "66fa0c2c2d3a9b7890ab1234"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request"
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "Деталі Joi-помилок"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 409
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No more register, user already exsists"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login",
+        "operationId": "login",
+        "description": "Успішний логін:\n- встановлює **HttpOnly** cookies `refreshToken`, `sessionId` (≈ 30 днів)\n- повертає `accessToken` у тілі\n",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "11.ivaniuta@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "Secret123!"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Set-Cookie": {
+                "description": "Встановлює `refreshToken` та `sessionId` (HttpOnly)",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "stratus": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully logged in"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "accessToken": {
+                          "type": "string",
+                          "example": "c3VwZXItcmFuZG9tLWFjY2Vzcw=="
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Unauthorized (невірні облікові дані або користувача не знайдено)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 401
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Logout",
+        "operationId": "logout",
+        "description": "Якщо є `sessionId` у cookies — видаляє сесію. Очищає cookies `sessionId`, `refreshToken`.",
+        "security": [],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/auth/change-password": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Change password",
+        "operationId": "changePass",
+        "description": "Зміна пароля за email + поточний пароль + новий пароль. Після зміни видаляються всі сесії користувача.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password",
+                  "newPassword"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 30
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 30
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Password updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "stratus": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Password updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Unauthorized (User not found / Incorrect current password)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 401
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Incorrect current password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Refresh session (cookies)",
+        "operationId": "refresh",
+        "description": "Читає HttpOnly cookies `sessionId` та `refreshToken`, перевидає їх і повертає новий `accessToken`.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Set-Cookie": {
+                "description": "Оновлює `refreshToken` та `sessionId` (HttpOnly, ≈30 днів)",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Succesfully refreshed session!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "accessToken": {
+                          "type": "string",
+                          "example": "c3VwZXItcmFuZG9tLWFjY2Vzcw=="
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized (Session not found / Session token expired)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 401
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Session token expired"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/projects": {
+      "get": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Get projects",
+        "operationId": "getProjects",
+        "description": "Публічний список проектів із пагінацією та сортуванням.",
+        "security": [],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "perPage",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 6
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string",
+              "default": "order"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "asc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully found projects!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/project"
+                          }
+                        },
+                        "page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "perPage": {
+                          "type": "integer",
+                          "example": 6
+                        },
+                        "totalItems": {
+                          "type": "integer",
+                          "example": 42
+                        },
+                        "totalPages": {
+                          "type": "integer",
+                          "example": 7
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Create project",
+        "operationId": "createProject",
+        "description": "Захищений ендпоінт. Приймає multipart/form-data із файлом `photo`.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "order",
+                  "descriptionEn",
+                  "descriptionUk",
+                  "descriptionPt",
+                  "liveUrl",
+                  "techStack",
+                  "typeEn",
+                  "typeUk",
+                  "typePt",
+                  "roleEn",
+                  "roleUk",
+                  "rolePt"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Lloyd Jefferson"
+                  },
+                  "order": {
+                    "type": "number",
+                    "example": 10
+                  },
+                  "descriptionEn": {
+                    "type": "string",
+                    "example": "Full-stack app with Next.js & Node.js"
+                  },
+                  "descriptionUk": {
+                    "type": "string",
+                    "example": "Фул-стек застосунок на Next.js та Node.js"
+                  },
+                  "descriptionPt": {
+                    "type": "string",
+                    "example": "Aplicação full-stack com Next.js e Node.js"
+                  },
+                  "liveUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://app.example.com"
+                  },
+                  "frontCodeUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "backCodeUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "photoUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "techStack": {
+                    "type": "string",
+                    "example": "Next.js, TypeScript, Node.js, MongoDB"
+                  },
+                  "typeEn": {
+                    "type": "string",
+                    "example": "Team project"
+                  },
+                  "typeUk": {
+                    "type": "string",
+                    "example": "Командний проєкт"
+                  },
+                  "typePt": {
+                    "type": "string",
+                    "example": "Projeto em equipe"
+                  },
+                  "roleEn": {
+                    "type": "string",
+                    "example": "Full-stack developer"
+                  },
+                  "roleUk": {
+                    "type": "string",
+                    "example": "Фул-стек розробник"
+                  },
+                  "rolePt": {
+                    "type": "string",
+                    "example": "Desenvolvedor full-stack"
+                  },
+                  "photo": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "maessage": {
+                      "type": "string",
+                      "example": "Succesfully created project!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/project"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Unauthorized (Bearer token missing/invalid/expired)"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/projects/{projectId}": {
+      "get": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Get project by id",
+        "operationId": "getProjectById",
+        "security": [],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully found project"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/project"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Project not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Update project",
+        "operationId": "updateProjectById",
+        "description": "Захищений ендпоінт. Приймає будь-яку підмножину полів. Підтримує файл `photo` — при наявності замінює попереднє фото.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "order": {
+                    "type": "number"
+                  },
+                  "descriptionEn": {
+                    "type": "string"
+                  },
+                  "descriptionUk": {
+                    "type": "string"
+                  },
+                  "descriptionPt": {
+                    "type": "string"
+                  },
+                  "liveUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "frontCodeUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "backCodeUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "photoUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "techStack": {
+                    "type": "string"
+                  },
+                  "typeEn": {
+                    "type": "string"
+                  },
+                  "typeUk": {
+                    "type": "string"
+                  },
+                  "typePt": {
+                    "type": "string"
+                  },
+                  "roleEn": {
+                    "type": "string"
+                  },
+                  "roleUk": {
+                    "type": "string"
+                  },
+                  "rolePt": {
+                    "type": "string"
+                  },
+                  "photo": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully patched project with id 66f9a1c9e0a9a9c2f0c12345!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/project"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Unauthorized (Bearer token missing/invalid/expired)"
+          },
+          "404": {
+            "description": "Project not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Delete project",
+        "operationId": "deleteProject",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized (Bearer token missing/invalid/expired)"
+          },
+          "404": {
+            "description": "Project not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "project": {
+        "Project": {
+          "type": "object",
+          "required": [
+            "name",
+            "order",
+            "descriptionEn",
+            "descriptionUk",
+            "descriptionPt",
+            "liveUrl",
+            "techStack",
+            "typeEn",
+            "typeUk",
+            "typePt",
+            "roleEn",
+            "roleUk",
+            "rolePt"
+          ],
+          "properties": {
+            "_id": {
+              "type": "string",
+              "description": "MongoDB ObjectId",
+              "example": "66fa0c2c2d3a9b7890ab1234"
+            },
+            "name": {
+              "type": "string",
+              "description": "Project name",
+              "example": "Lloyd Jefferson"
+            },
+            "order": {
+              "type": "number",
+              "description": "Used for sorting display order",
+              "example": 10
+            },
+            "descriptionEn": {
+              "type": "string",
+              "example": "Full-stack web app built with Next.js and Node.js"
+            },
+            "descriptionUk": {
+              "type": "string",
+              "example": "Фул-стек вебзастосунок, створений на Next.js та Node.js"
+            },
+            "descriptionPt": {
+              "type": "string",
+              "example": "Aplicação web full-stack desenvolvida com Next.js e Node.js"
+            },
+            "photoUrl": {
+              "type": "string",
+              "format": "uri",
+              "nullable": true,
+              "description": "Public URL of the uploaded project image",
+              "example": "https://cdn.example.com/projects/lloyd-jefferson.jpg"
+            },
+            "liveUrl": {
+              "type": "string",
+              "format": "uri",
+              "description": "Public live project link",
+              "example": "https://lloyd-jefferson.vercel.app"
+            },
+            "frontCodeUrl": {
+              "type": "string",
+              "format": "uri",
+              "nullable": true,
+              "description": "Link to frontend repository",
+              "example": "https://github.com/user/lloyd-jefferson-frontend"
+            },
+            "backCodeUrl": {
+              "type": "string",
+              "format": "uri",
+              "nullable": true,
+              "description": "Link to backend repository",
+              "example": "https://github.com/user/lloyd-jefferson-backend"
+            },
+            "techStack": {
+              "type": "string",
+              "description": "Technologies used",
+              "example": "Next.js, TypeScript, Node.js, MongoDB"
+            },
+            "typeEn": {
+              "type": "string",
+              "example": "Team project"
+            },
+            "typeUk": {
+              "type": "string",
+              "example": "Командний проєкт"
+            },
+            "typePt": {
+              "type": "string",
+              "example": "Projeto em equipe"
+            },
+            "roleEn": {
+              "type": "string",
+              "example": "Full-stack developer"
+            },
+            "roleUk": {
+              "type": "string",
+              "example": "Фул-стек розробник"
+            },
+            "rolePt": {
+              "type": "string",
+              "example": "Desenvolvedor full-stack"
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2025-01-19T12:34:56.000Z"
+            },
+            "updatedAt": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2025-01-19T12:34:56.000Z"
+            }
+          }
+        }
+      }
+    }
+  }
+}

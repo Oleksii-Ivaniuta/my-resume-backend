@@ -1,0 +1,19 @@
+tags: [Projects]
+summary: Delete project
+operationId: deleteProject
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: projectId
+    required: true
+    schema: { type: string }
+responses:
+  204:
+    description: No Content
+  401:
+    description: Unauthorized (Bearer token missing/invalid/expired)
+  404:
+    description: Project not found
+  500:
+    description: Internal server error

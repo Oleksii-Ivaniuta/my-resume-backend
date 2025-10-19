@@ -1,0 +1,12 @@
+tags: [Auth]
+summary: Logout
+operationId: logout
+description: Якщо є `sessionId` у cookies — видаляє сесію. Очищає cookies `sessionId`, `refreshToken`.
+security: []
+responses:
+  204:
+    description: No Content
+  400:
+    description: User not found
+  500:
+    description: Internal server error

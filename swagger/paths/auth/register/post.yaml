@@ -1,0 +1,68 @@
+tags: [Auth]
+summary: Register first (and only) user
+operationId: register
+description: Створює першого користувача. Якщо користувач уже існує — 409 Conflict.
+security: [] # публічний
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required: [name, email, password]
+        properties:
+          name:
+            {
+              type: string,
+              minLength: 3,
+              maxLength: 30,
+              example: Oleksii Ivaniuta,
+            }
+          email: { type: string, format: email, example: 11.ivaniuta@gmail.com }
+          password: { type: string, example: Secret123! }
+responses:
+  201:
+    description: Created
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            stratus: { type: integer, example: 201 }
+            message: { type: string, example: Successfully registered a user! }
+            data:
+              type: object
+              description: Створений користувач (публічні поля)
+              properties:
+                _id: { type: string, example: 66fa0c2c2d3a9b7890ab1234 }
+                name: { type: string }
+                email: { type: string, format: email }
+                createdAt: { type: string, format: date-time }
+                updatedAt: { type: string, format: date-time }
+  409:
+    description: User already exists
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status: { type: integer, example: 409 }
+            message:
+              {
+                type: string,
+                example: 'No more register, user already exsists',
+              }
+  400:
+    description: Validation error
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status: { type: integer, example: 400 }
+            message: { type: string, example: Bad Request }
+            data:
+              type: object
+              description: Деталі Joi-помилок
+  500:
+    description: Internal server error
