@@ -1,0 +1,38 @@
+tags: [Send-Mail]
+summary: Send Email to Owner
+operationId: sendMail
+description: Захищений ендпоінт. Приймає json.
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    json:
+      schema:
+        type: object
+        required:
+          - name
+          - email
+          - message
+        properties:
+          name: { type: string, example: Lloyd Jefferson }
+          email: { type: string, example: jonh.doe@mail.com }
+          message: { type: string, example: Hello this is new message }
+responses:
+  200:
+    description: Sent
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status: { type: integer, example: 200 }
+            maessage: { type: string, example: Succesfully sent! }
+            data:
+              $ref: ../../components/schemas/message.yaml
+  400:
+    description: Token invalid
+  401:
+    description: Unauthorized (Bearer token missing/invalid/expired)
+  500:
+    description: Internal server error

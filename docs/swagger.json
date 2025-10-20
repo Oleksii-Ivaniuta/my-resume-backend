@@ -912,6 +912,84 @@
           }
         }
       }
+    },
+    "/send-mail": {
+      "post": {
+        "tags": [
+          "Send-Mail"
+        ],
+        "summary": "Send Email to Owner",
+        "operationId": "sendMail",
+        "description": "Захищений ендпоінт. Приймає json.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "email",
+                  "message"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Lloyd Jefferson"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "jonh.doe@mail.com"
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "Hello this is new message"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "maessage": {
+                      "type": "string",
+                      "example": "Succesfully sent!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/message"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Token invalid"
+          },
+          "401": {
+            "description": "Unauthorized (Bearer token missing/invalid/expired)"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1033,6 +1111,38 @@
               "type": "string",
               "format": "date-time",
               "example": "2025-01-19T12:34:56.000Z"
+            }
+          }
+        }
+      },
+      "message": {
+        "SendEmail": {
+          "type": "object",
+          "required": [
+            "email",
+            "name",
+            "message"
+          ],
+          "properties": {
+            "email": {
+              "type": "string",
+              "format": "email",
+              "description": "User email address",
+              "example": "user@example.com"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 30,
+              "description": "Sender name",
+              "example": "Oleksii Ivaniuta"
+            },
+            "message": {
+              "type": "string",
+              "minLength": 5,
+              "maxLength": 300,
+              "description": "Message content",
+              "example": "Hello! I’m interested in your work and would like to get in touch."
             }
           }
         }

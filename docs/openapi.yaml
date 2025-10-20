@@ -51,6 +51,9 @@ paths:
       $ref: ../swagger/paths/projects/{projectId}/patch.yaml
     delete:
       $ref: ../swagger/paths/projects/{projectId}/delete.yaml
+  /send-mail:
+    post:
+      $ref: ../swagger/paths/send-mail/post.yaml
 
 components:
   securitySchemes:
