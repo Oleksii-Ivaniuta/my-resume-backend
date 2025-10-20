@@ -6,6 +6,7 @@ export const ENV_VARS = {
   MONGO_DB_DB: 'MONGO_DB_DB',
   APP_DOMAIN: 'APP_DOMAIN',
   MAIL_TOKEN: 'MAIL_TOKEN',
+  MAIL_TO: 'MAIL_TO',
 };
 
 export const SMTP = {

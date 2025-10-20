@@ -1,4 +1,4 @@
-import { SMTP } from '../constants/envVars.js';
+import { ENV_VARS, SMTP } from '../constants/envVars.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
 import { sendEmail } from '../utils/sendEmail.js';
 import createHttpError from 'http-errors';
@@ -7,7 +7,7 @@ export const sendMail = async (payload) => {
   try {
     await sendEmail({
       from: getEnvVar(SMTP.SMTP_FROM),
-      to: 'oivaniuta@gmail.com',
+      to: getEnvVar(ENV_VARS.MAIL_TO),
       subject: 'New message from my-resume web app',
       html: `<p>This message from ${payload.name} <br/> Email is: ${payload.email} <br/> Message text: ${payload.message}</p>`,
     });
@@ -18,5 +18,4 @@ export const sendMail = async (payload) => {
       message: 'Failed to send email, please try again later',
     });
   }
-  console.log(payload);
 };
