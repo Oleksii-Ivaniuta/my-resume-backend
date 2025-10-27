@@ -114,14 +114,16 @@ export const updateProjectController = async (req, res, next) => {
       const res = await saveFileToCloudinary(photo);
       photoUrl = res.url;
       photoPublicId = res.publicId;
-      if (oldPhotoPublicId) {
-        await deleteFileFromCloudinary(oldPhotoPublicId);
-      }
     } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+    if (oldPhoto) {
       if (oldPhotoUrl) {
         await deleteFileFromUploadDir(oldPhotoUrl);
       }
-      photoUrl = await saveFileToUploadDir(photo);
+      if (oldPhotoPublicId) {
+        await deleteFileFromCloudinary(oldPhotoPublicId);
+      }
     }
   }
 
