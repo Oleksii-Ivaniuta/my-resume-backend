@@ -76,5 +76,5 @@ export const getProjectPhotoUrl = async (projectId) => {
   const project = await ProjectsCollection.findOne({
     _id: projectId,
   });
-  return project.photoUrl;
+  return { url: project.photoUrl, id: project.photoPublicId };
 };

@@ -11,6 +11,12 @@ import {
   updateProject,
 } from '../services/projects.js';
 import { deleteFileFromUploadDir } from '../utils/deleteFileFromUploadDir.js';
+import {
+  deleteFileFromCloudinary,
+  saveFileToCloudinary,
+} from '../utils/saveFileToCloudinary.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
+import { ENV_VARS } from '../constants/envVars.js';
 
 export const getProjectsController = async (req, res, next) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -46,14 +52,22 @@ export const createProjectController = async (req, res) => {
   const body = await req.body;
   const photo = await req.file;
   let photoUrl;
+  let photoPublicId;
 
   if (photo) {
-    photoUrl = await saveFileToUploadDir(photo);
+    if (getEnvVar(ENV_VARS.ENABLE_CLOUDINARY) === 'true') {
+      const res = await saveFileToCloudinary(photo);
+      photoUrl = res.url;
+      photoPublicId = res.publicId;
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
   }
 
   const project = await createProject({
     ...body,
     photoUrl: photoUrl,
+    photoPublicId: photoPublicId,
   });
 
   res.status(201).json({
@@ -65,10 +79,16 @@ export const createProjectController = async (req, res) => {
 
 export const deleteProjectController = async (req, res, next) => {
   const { projectId } = req.params;
-  const oldPhotoUrl = await getProjectPhotoUrl(projectId);
+  const oldPhoto = await getProjectPhotoUrl(projectId);
+  const oldPhotoUrl = oldPhoto.url;
+  const oldPhotoPublicId = oldPhoto.id;
 
   if (oldPhotoUrl) {
     await deleteFileFromUploadDir(oldPhotoUrl);
+  }
+
+  if (oldPhotoPublicId) {
+    await deleteFileFromCloudinary(oldPhotoPublicId);
   }
 
   const project = await deleteProject(projectId);
@@ -84,19 +104,31 @@ export const updateProjectController = async (req, res, next) => {
   const body = await req.body;
   const photo = await req.file;
   let photoUrl;
-
-  const oldPhotoUrl = await getProjectPhotoUrl(projectId);
+  let photoPublicId;
+  const oldPhoto = await getProjectPhotoUrl(projectId);
+  const oldPhotoUrl = oldPhoto.url;
+  const oldPhotoPublicId = oldPhoto.id;
 
   if (photo) {
-    if (oldPhotoUrl) {
-      await deleteFileFromUploadDir(oldPhotoUrl);
+    if (getEnvVar(ENV_VARS.ENABLE_CLOUDINARY) === 'true') {
+      const res = await saveFileToCloudinary(photo);
+      photoUrl = res.url;
+      photoPublicId = res.publicId;
+      if (oldPhotoPublicId) {
+        await deleteFileFromCloudinary(oldPhotoPublicId);
+      }
+    } else {
+      if (oldPhotoUrl) {
+        await deleteFileFromUploadDir(oldPhotoUrl);
+      }
+      photoUrl = await saveFileToUploadDir(photo);
     }
-    photoUrl = await saveFileToUploadDir(photo);
   }
 
   const result = await updateProject(projectId, {
     ...body,
     photoUrl: photoUrl,
+    photoPublicId: photoPublicId,
   });
 
   if (!result) {

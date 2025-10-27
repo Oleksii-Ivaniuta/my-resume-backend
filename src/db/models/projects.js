@@ -66,6 +66,10 @@ const projectsSchema = new Schema(
       type: String,
       required: true,
     },
+    photoPublicId: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,
